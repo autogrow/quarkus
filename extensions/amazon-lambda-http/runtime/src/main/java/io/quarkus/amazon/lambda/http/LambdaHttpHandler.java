@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.jboss.logging.Logger;
@@ -16,18 +17,13 @@ import org.jboss.logging.Logger;
 import com.amazonaws.serverless.proxy.internal.LambdaContainerHandler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.FileRegion;
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.DefaultLastHttpContent;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.codec.http.*;
 import io.netty.util.ReferenceCountUtil;
 import io.quarkus.amazon.lambda.http.model.AwsProxyRequest;
 import io.quarkus.amazon.lambda.http.model.AwsProxyResponse;
@@ -41,6 +37,7 @@ public class LambdaHttpHandler implements RequestHandler<AwsProxyRequest, AwsPro
     private static final Logger log = Logger.getLogger("quarkus.amazon.lambda.http");
 
     private static final int BUFFER_SIZE = 8096;
+    private static final String API_GATEWAY_AUTHORIZER_CONTEXT = "api-gateway-authorizer-context";
 
     private static Headers errorHeaders = new Headers();
     static {
@@ -193,6 +190,16 @@ public class LambdaHttpHandler implements RequestHandler<AwsProxyRequest, AwsPro
                 requestContent = new DefaultLastHttpContent(body);
             }
         }
+        Optional.ofNullable(request.getRequestContext()).ifPresent(
+                proxyRequest -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        nettyRequest.headers().add(API_GATEWAY_AUTHORIZER_CONTEXT,
+                                mapper.writeValueAsString(proxyRequest.getAuthorizer()));
+                    } catch (JsonProcessingException e) {
+                        log.error(e);
+                    }
+                });
         NettyResponseHandler handler = new NettyResponseHandler(request);
         VirtualClientConnection connection = VirtualClientConnection.connect(handler, VertxHttpRecorder.VIRTUAL_HTTP,
                 clientAddress);
