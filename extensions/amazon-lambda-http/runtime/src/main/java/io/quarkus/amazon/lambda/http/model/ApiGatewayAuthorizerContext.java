@@ -43,6 +43,11 @@ public class ApiGatewayAuthorizerContext {
     //-------------------------------------------------------------
 
     @JsonAnyGetter
+    public Map<String, String> getContextProperties() {
+        return contextProperties;
+    }
+
+    @JsonAnyGetter
     public String getContextValue(String key) {
         return contextProperties.get(key);
     }

@@ -472,7 +472,7 @@ public class PomTransformerTest {
                 "    <groupId>io.quarkus</groupId>\n" +
                 "    <artifactId>quarkus-parent</artifactId>\n" +
                 "    <name>Quarkus - Parent pom</name>\n" +
-                "    <version>999-SNAPSHOT</version>\n" +
+                "    <version>1.8.1.Final-FARMROAD</version>\n" +
                 "    <packaging>pom</packaging>\n" +
                 "</project>", "    ", "\n");
         assertFormat("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +

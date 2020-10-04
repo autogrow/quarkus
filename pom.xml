@@ -12,7 +12,7 @@
     <groupId>io.quarkus</groupId>
     <artifactId>quarkus-parent</artifactId>
     <name>Quarkus - Parent pom</name>
-    <version>999-SNAPSHOT</version>
+    <version>1.8.1.Final-FARMROAD</version>
     <packaging>pom</packaging>
 
     <licenses>
@@ -88,13 +88,17 @@
     </repositories>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
+<!--        <snapshotRepository>-->
+<!--            <id>sonatype-nexus-snapshots</id>-->
+<!--            <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--        <repository>-->
+<!--            <id>sonatype-nexus-release</id>-->
+<!--            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+<!--        </repository>-->
         <repository>
-            <id>sonatype-nexus-release</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>farmroad</id>
+            <url>http://nexus-lb-1189465380.us-east-1.elb.amazonaws.com:8081/repository/farmroad/</url>
         </repository>
     </distributionManagement>
 
